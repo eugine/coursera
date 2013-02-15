@@ -21,5 +21,9 @@ public class QuickFindAlgorithmTest {
 		qf.union(3, 2);
 
 		assertTrue(qf.connected(0, 2));
+		
+		assertFalse(qf.connected(1, 8));
+		assertFalse(qf.connected(4, 6));
+		assertFalse(qf.connected(6, 7));
 	}
 }
