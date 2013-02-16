@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class QuickUnionAlgorithm {
 
-	private int id[];
+	protected int id[];
 
 	public QuickUnionAlgorithm(int size) {
 		id = new int[size];
@@ -14,10 +14,12 @@ public class QuickUnionAlgorithm {
 	}
 
 	public void union(int p, int q) {
-		id[p] = root(q);
+		int i = root(p);
+		int j = root(q);
+		id[i] = j;
 	}
 
-	private int root(int p) {
+	protected int root(int p) {
 		return (id[p] == p) ? p : root(id[p]);
 	}
 
