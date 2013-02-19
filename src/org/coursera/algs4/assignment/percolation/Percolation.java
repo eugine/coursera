@@ -2,7 +2,7 @@ package org.coursera.algs4.assignment.percolation;
 
 import java.util.Arrays;
 
-import org.coursera.algs4.QuickFindAlgorithm;
+import org.coursera.algs4.QuickUnionAlgorithm;
 
 /**
  * @author Eugene Sokolov
@@ -14,7 +14,8 @@ public class Percolation {
 
 	private int size;
 	private byte grid[];
-	private int topSiteIndex, bottomSiteIndex;
+	private int virtualTopSiteIndex, virtualBottomSiteIndex;
+	private QuickUnionAlgorithm uf;
 
 	/**
 	 * Create N-by-N grid, with all sites blocked
@@ -31,20 +32,21 @@ public class Percolation {
 		int gridSize = size * size;
 		grid = new byte[gridSize + 2]; // N*N elements + top and bottom imagine
 										// site elements
+		uf = new QuickUnionAlgorithm(gridSize + 2);
 		// initialize first N elements
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				grid[i * N + j] = BLOCKED_SITE;
 			}
 		}
-		topSiteIndex = gridSize; // index = NN;
-		bottomSiteIndex = gridSize + 1; // NN+1
-		grid[topSiteIndex] = OPEN_SITE;
-		grid[bottomSiteIndex] = OPEN_SITE;
+		virtualTopSiteIndex = gridSize; // index = NN;
+		virtualBottomSiteIndex = gridSize + 1; // NN+1
+		grid[virtualTopSiteIndex] = OPEN_SITE;
+		grid[virtualBottomSiteIndex] = OPEN_SITE;
 	}
 
 	/**
-	 * Transform (i,j) to index in grid array (i*N+j)
+	 * Transform (i,j) to index in grid array ((i-1)*N+(j-1))
 	 * 
 	 * @param row
 	 *            row index
@@ -52,11 +54,11 @@ public class Percolation {
 	 *            column index
 	 * @return index in the grid array or -1 if out of the boundaries
 	 */
-	private int getSiteIndex(int row, int column) {
-		if (row < 0 || row >= size || column < 0 || column >= size) {
+	private int getGridIndex(int row, int column) {
+		if (row <= 0 || row > size || column <= 0 || column > size) {
 			return -1;
 		}
-		return size * row + column;
+		return size * (row - 1) + (column - 1);
 	}
 
 	/**
@@ -67,36 +69,41 @@ public class Percolation {
 	 * @param column
 	 *            - column index
 	 * @throws IndexOutOfBoundsException
-	 *             rise exception in case i,j >= N or i,j < 0
+	 *             rise exception in case i,j > N or i,j <= 0
 	 */
 	public void open(int row, int column) {
-		int siteIndex = getSiteIndex(row, column);
-		if (siteIndex == -1) {
+		int gridIndex = getGridIndex(row, column);
+		if (gridIndex == -1) {
 			throw new IndexOutOfBoundsException("Index is out of boundaries.");
 		}
-		grid[siteIndex] = OPEN_SITE;
-		int top = getSiteIndex(row-1, column);
-		int left = getSiteIndex(row, column-1);
-		int right = getSiteIndex(row, column+1);
-		int bottom = getSiteIndex(row + 1, column);
+		grid[gridIndex] = OPEN_SITE;
+		int top = getGridIndex(row-1, column);
+		int left = getGridIndex(row, column-1);
+		int right = getGridIndex(row, column+1);
+		int bottom = getGridIndex(row + 1, column);
 		if (top != -1 && grid[top] == OPEN_SITE) {
-			//unite with top
+			//union with top
+			uf.union(gridIndex, top);
 		}
 		if (left != -1 && grid[left] == OPEN_SITE) {
-			//unite with left
+			//union with left
+			uf.union(gridIndex, left);
 		}
 		if (right != -1 && grid[right] == OPEN_SITE) {
-			//unite with right
+			//union with right
+			uf.union(gridIndex, right);
 		}
 		if (bottom != -1 && grid[bottom] == OPEN_SITE) {
-			//unite with bottom
+			//union with bottom
+			uf.union(gridIndex, bottom);			
 		}
-		if (row == 0) {
-			//if top row - unite with imagine top site
+		if (row == 1) {
+			//if top row - union with virtual top site
+			uf.union(gridIndex, virtualTopSiteIndex);
 		} 
-		if (row == size - 1) {
-			//if bottom row - unite with imagine bottom site
-			
+		if (row == size) {
+			//if bottom row - union with virtual bottom site
+			uf.union(gridIndex, virtualBottomSiteIndex);
 		}
 	}
 
@@ -110,12 +117,15 @@ public class Percolation {
 	 * @return true in case site (i,j) is open, false otherwise
 	 */
 	public boolean isOpen(int row, int column) {
-		int siteIndex = getSiteIndex(row, column);
-		return;
+		int gridIndex = getGridIndex(row, column);
+		if (gridIndex == -1) {
+			throw new IndexOutOfBoundsException("Index is out of boundaries.");
+		}
+		return grid[gridIndex] == OPEN_SITE;
 	}
 
 	/**
-	 * Is site (row, column) full?
+	 * Is site (row, column) full (connected to top)?
 	 * 
 	 * @param row
 	 *            - row index
@@ -124,7 +134,11 @@ public class Percolation {
 	 * @return true in case site (i,j) is full, false otherwise
 	 */
 	public boolean isFull(int row, int column) {
-		return false;
+		int gridIndex = getGridIndex(row, column);
+		if (gridIndex == -1) {
+			throw new IndexOutOfBoundsException("Index is out of boundaries.");
+		}
+		return uf.connected(gridIndex, virtualTopSiteIndex);
 	}
 
 	/**
@@ -133,12 +147,13 @@ public class Percolation {
 	 * @return true in case the system percolate
 	 */
 	public boolean percolates() {
-		return false;
+		return uf.connected(virtualBottomSiteIndex, virtualTopSiteIndex);
 	}
 
 	@Override
 	public String toString() {
-		return "Percolation [grid=" + Arrays.toString(grid) + "]";
+		return "Percolation [grid=" + Arrays.toString(grid) + "]" + "\n" +
+				uf.toString();
 	}
 
 }
