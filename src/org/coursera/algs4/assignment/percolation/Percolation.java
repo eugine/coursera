@@ -3,6 +3,7 @@ package org.coursera.algs4.assignment.percolation;
 import java.util.Arrays;
 
 import org.coursera.algs4.QuickUnionAlgorithm;
+import org.coursera.algs4.WeightedQuickUnionAlgorithm;
 
 /**
  * @author Eugene Sokolov
@@ -15,7 +16,8 @@ public class Percolation {
 	private int size;
 	private byte grid[];
 	private int virtualTopSiteIndex, virtualBottomSiteIndex;
-	private QuickUnionAlgorithm uf;
+//	private QuickUnionAlgorithm uf;
+	private WeightedQuickUnionAlgorithm uf;
 
 	/**
 	 * Create N-by-N grid, with all sites blocked
@@ -32,7 +34,8 @@ public class Percolation {
 		int gridSize = size * size;
 		grid = new byte[gridSize + 2]; // N*N elements + top and bottom imagine
 										// site elements
-		uf = new QuickUnionAlgorithm(gridSize + 2);
+//		uf = new QuickUnionAlgorithm(gridSize + 2);
+		uf = new WeightedQuickUnionAlgorithm(gridSize + 2);
 		// initialize first N elements
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
@@ -101,9 +104,12 @@ public class Percolation {
 			//if top row - union with virtual top site
 			uf.union(gridIndex, virtualTopSiteIndex);
 		} 
-		if (row == size) {
-			//if bottom row - union with virtual bottom site
-			uf.union(gridIndex, virtualBottomSiteIndex);
+		//check bottom row for connection to virtual top row: if connected -> connected to virtual bottom.
+		for (int i = 1; i <= size; i++) {
+			int index = getGridIndex(size, i);
+			if (grid[index] == OPEN_SITE && uf.connected(index, virtualTopSiteIndex)) {
+				uf.union(index, virtualBottomSiteIndex);
+			}
 		}
 	}
 

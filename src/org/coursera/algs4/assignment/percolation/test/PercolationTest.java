@@ -136,4 +136,30 @@ public class PercolationTest {
 		percolation.isFull(1, 11);
 	}
 
+	@Test
+	public void testPreExistingBackwash() {
+	    int size = 3;
+	    Percolation percolation = new Percolation(size);
+	    percolation.open(3, 1);
+	    percolation.open(1, 3);
+	    percolation.open(2, 3);
+	    percolation.open(3, 3);
+	    assertTrue(percolation.percolates());
+	    assertFalse(percolation.isFull(3, 1));
+	}
+
+	@Test
+	public void testFullAfterPercolation() {
+	    int size = 3;
+	    Percolation percolation = new Percolation(size);
+	    percolation.open(1, 3);
+	    percolation.open(2, 3);
+	    percolation.open(3, 3);
+	    percolation.open(2, 2);
+	    percolation.open(3, 1);
+	    percolation.open(2, 1);
+	    assertTrue(percolation.isFull(3, 1));
+	}	
+
 }
+
