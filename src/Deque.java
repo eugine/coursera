@@ -1,10 +1,14 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class Deque<Item> implements Iterable<Item> {
+	private Node<Item> first, last;
+	private int size;
 	/**
 	 * construct an empty deque
 	 */
 	public Deque() {
+		size = 0;
 	}
 
 	/**
@@ -13,7 +17,7 @@ public class Deque<Item> implements Iterable<Item> {
 	 * @return
 	 */
 	public boolean isEmpty() {
-		return true;
+		return size == 0;
 	}
 
 	/**
@@ -22,7 +26,7 @@ public class Deque<Item> implements Iterable<Item> {
 	 * @return
 	 */
 	public int size() {
-		return 0;
+		return size;
 	}
 
 	/**
@@ -34,6 +38,16 @@ public class Deque<Item> implements Iterable<Item> {
 		if (item == null) {
 			throw new java.lang.NullPointerException("It isn't allowed to add null items");
 		}
+		Node<Item> n = new Node<Item>(item);
+		if (isEmpty()) {
+			first = n;
+			last = first;
+		} else {
+			n.next = first;
+			first.prev = n;
+			first = n;
+		}
+		size++;
 	}
 
 	/**
@@ -45,6 +59,16 @@ public class Deque<Item> implements Iterable<Item> {
 		if (item == null) {
 			throw new java.lang.NullPointerException("It isn't allowed to add null items");
 		}
+		Node<Item> n = new Node<Item>(item);
+		if (isEmpty()) {
+			last = n;
+			first = last;
+ 		} else {
+ 			n.prev = last;
+ 			last.next = n;
+ 			last = n;
+ 		}
+		size++;
 	}
 
 	/**
@@ -53,7 +77,18 @@ public class Deque<Item> implements Iterable<Item> {
 	 * @return
 	 */
 	public Item removeFirst() {
-		return null;
+		if (isEmpty()) {
+			throw new NoSuchElementException("The deque is empty");
+		}
+		Item item = first.item;
+		first = first.next;
+		first.prev = null;
+		size--;
+		if (size == 0) {
+			last = null;
+			first = null;
+		}
+		return item;
 	}
 
 	/**
@@ -62,7 +97,18 @@ public class Deque<Item> implements Iterable<Item> {
 	 * @return
 	 */
 	public Item removeLast() {
-		return null;
+		if (isEmpty()) {
+			throw new NoSuchElementException("The deque is empty");
+		}
+		Item item = last.item;
+		last = last.prev;
+		last.next = null;
+		size--;
+		if (size == 0) {
+			last = null;
+			first = null;
+		}
+		return item;
 	}
 
 	/**
@@ -70,5 +116,33 @@ public class Deque<Item> implements Iterable<Item> {
 	 */
 	public Iterator<Item> iterator() {
 		return null;
+	}
+	
+	private class Node<T>{
+		private T item;
+		private Node<T> next;
+		private Node<T> prev;
+		
+		Node() {
+			item = null;
+			next = null;
+			prev = null;
+		}
+		
+		Node(T item) {
+			this.item = item;
+			next = null;
+			prev = null;
+		}
+	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		Node<Item> current = first;
+		while(current != null) {
+			sb.append(current.item + " | ");
+			current = current.next;
+		}
+		return sb.toString();
 	}
 }

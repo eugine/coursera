@@ -26,15 +26,17 @@ public class DequeTest {
 		assertFalse(deque.isEmpty());
 		deque.addFirst(new String("test first"));
 		deque.addLast(new String("test last"));
-		assertTrue(deque.size() == 3);
+		assertEquals(deque.size(), 3);
 	}
 	
 	@Test
 	public void testAdditionOrdered(){
-		Deque<Integer> deque = new Deque<>();
+		Deque<Integer> deque = new Deque<Integer>();
+		System.out.println("Ordered: " + deque);
 		for (int i = 0; i < 10; i++) {
 			deque.addFirst(i);
 		}
+		System.out.println("Ordered: " + deque);
 		for (int i = 0; i < 10; i++) {
 			assertEquals(deque.removeLast(), new Integer(i));
 		}
@@ -42,7 +44,7 @@ public class DequeTest {
 	
 	@Test
 	public void testAdditionReverseOrdered(){
-		Deque<Integer> deque = new Deque<>();
+		Deque<Integer> deque = new Deque<Integer>();
 		for (int i = 0; i < 10; i++) {
 			deque.addLast(i);
 		}
@@ -84,7 +86,7 @@ public class DequeTest {
 	
 	@Test(expected = NoSuchElementException.class)
 	public void testRemoveLastFromEmptyDeque() {
-		Deque<Integer> deque = new Deque<>();
+		Deque<Integer> deque = new Deque<Integer>();
 		int count = 10;
 		for (int i = 0; i < count; i++) {
 			deque.addLast(i);
@@ -97,7 +99,7 @@ public class DequeTest {
 	
 	@Test(expected = NoSuchElementException.class)
 	public void testRemoveFirstFromEmptyDeque() {
-		Deque<Integer> deque = new Deque<>();
+		Deque<Integer> deque = new Deque<Integer>();
 		int count = 10;
 		for (int i = 0; i < count; i++) {
 			deque.addFirst(10);
