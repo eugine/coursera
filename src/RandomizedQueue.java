@@ -1,13 +1,18 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class RandomizedQueue<Item> {
 
-	
+	private static final int MIN_COUNT = 10;
+	private Object[] items;
+	private int size;
+
 	/**
 	 * construct an empty randomized queue
 	 */
 	public RandomizedQueue() {
-
+		items = new Object[MIN_COUNT];
+		size = 0;
 	}
 
 	/**
@@ -16,7 +21,7 @@ public class RandomizedQueue<Item> {
 	 * @return
 	 */
 	public boolean isEmpty() {
-		return true;
+		return size == 0;
 
 	}
 
@@ -26,7 +31,7 @@ public class RandomizedQueue<Item> {
 	 * @return
 	 */
 	public int size() {
-		return 0;
+		return size;
 	}
 
 	/**
@@ -35,7 +40,17 @@ public class RandomizedQueue<Item> {
 	 * @param item
 	 */
 	public void enqueue(Item item) {
-
+		if (item == null) {
+			throw new NullPointerException();
+		}
+		if (size + 1 == items.length) {
+			int newCapacity = items.length << 1;
+			Object[] copy = new Object[newCapacity];
+			System.arraycopy(items, 0, copy, 0, items.length);
+			items = copy;
+		}
+		items[size] = item;
+		size++;
 	}
 
 	/**
@@ -44,7 +59,19 @@ public class RandomizedQueue<Item> {
 	 * @return
 	 */
 	public Item dequeue() {
-		return null;
+		if (size == 0) {
+			throw new NoSuchElementException();
+		}
+		int pos = StdRandom.uniform(size);
+		Item item = (Item) items[pos];
+		items[pos] = items[--size];
+		if (size < items.length / 3 && items.length > MIN_COUNT) {
+			int newCapacity = items.length >> 1;
+			Object[] copy = new Object[newCapacity];
+			System.arraycopy(items, 0, copy, 0, copy.length);
+			items = copy;
+		}
+		return item;
 	}
 
 	/**
@@ -53,7 +80,10 @@ public class RandomizedQueue<Item> {
 	 * @return
 	 */
 	public Item sample() {
-		return null;
+		if (size == 0) {
+			throw new NoSuchElementException();
+		}
+		return (Item) items[StdRandom.uniform(size)];
 	}
 
 	/**
@@ -62,7 +92,46 @@ public class RandomizedQueue<Item> {
 	 * @return
 	 */
 	public Iterator<Item> iterator() {
-		return null;
+		return new RandomizedQueueIterator<Item>();
 	}
 
+	private final class RandomizedQueueIterator<T> implements Iterator<T> {
+		
+		private Object[] elements; 
+		private int current;
+		
+		public RandomizedQueueIterator() {
+			elements = new Object[size];
+			current = 0;
+			if (size > 0) {
+				elements[0] = items[0];
+				//Fisher–Yates shuffle, The "inside-out" algorithm
+				for (int i = 1; i < elements.length; i++) {
+					int j = StdRandom.uniform(i+1);
+					elements[i] = elements[j];
+					elements[j] = items[i];
+				}
+			}
+		}
+		@Override
+		public boolean hasNext() {
+			return current < elements.length;
+		}
+
+		@Override
+		public T next() {
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			T t = (T)elements[current];
+			current++;
+			return t;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+		
+	}
 }
