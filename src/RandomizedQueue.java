@@ -1,11 +1,11 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class RandomizedQueue<Item> {
+public class RandomizedQueue<Item> implements Iterable<Item> {
 
-	private static final int MIN_COUNT = 10;
-	private Object[] items;
-	private int size;
+    private static final int MIN_COUNT = 10;
+    private Object[] items;
+    private int size;
 
 	/**
 	 * construct an empty randomized queue
@@ -123,7 +123,7 @@ public class RandomizedQueue<Item> {
 			if (!hasNext()) {
 				throw new NoSuchElementException();
 			}
-			T t = (T)elements[current];
+			T t = (T) elements[current];
 			current++;
 			return t;
 		}
