@@ -11,14 +11,13 @@ public class DequeTest {
 		Deque<String> deque = new Deque<String>();
 		deque.addFirst(null);
 	}
-	
+
 	@Test(expected = NullPointerException.class)
 	public void testAddNullLastNullPointerException() {
 		Deque<String> deque = new Deque<String>();
 		deque.addLast(null);
 	}
-	
-	
+
 	@Test
 	public void testAddition() {
 		Deque<String> deque = new Deque<String>();
@@ -28,22 +27,20 @@ public class DequeTest {
 		deque.addLast(new String("test last"));
 		assertEquals(deque.size(), 3);
 	}
-	
+
 	@Test
-	public void testAdditionOrdered(){
+	public void testAdditionOrdered() {
 		Deque<Integer> deque = new Deque<Integer>();
-		System.out.println("Ordered: " + deque);
 		for (int i = 0; i < 10; i++) {
 			deque.addFirst(i);
 		}
-		System.out.println("Ordered: " + deque);
 		for (int i = 0; i < 10; i++) {
 			assertEquals(deque.removeLast(), new Integer(i));
 		}
 	}
-	
+
 	@Test
-	public void testAdditionReverseOrdered(){
+	public void testAdditionReverseOrdered() {
 		Deque<Integer> deque = new Deque<Integer>();
 		for (int i = 0; i < 10; i++) {
 			deque.addLast(i);
@@ -52,7 +49,7 @@ public class DequeTest {
 			assertEquals(deque.removeFirst(), new Integer(i));
 		}
 	}
-	
+
 	@Test
 	public void testRemove() {
 		Deque<String> deque = new Deque<String>();
@@ -65,7 +62,7 @@ public class DequeTest {
 		deque.removeLast();
 		assertTrue(deque.size() == 0);
 	}
-	
+
 	@Test
 	public void testIsEmpty() {
 		Deque<String> deque = new Deque<String>();
@@ -83,7 +80,7 @@ public class DequeTest {
 		deque.removeLast();
 		assertTrue(deque.isEmpty());
 	}
-	
+
 	@Test(expected = NoSuchElementException.class)
 	public void testRemoveLastFromEmptyDeque() {
 		Deque<Integer> deque = new Deque<Integer>();
@@ -94,9 +91,9 @@ public class DequeTest {
 		for (int i = 0; i < count; i++) {
 			deque.removeLast();
 		}
-		deque.removeLast(); //should throw
+		deque.removeLast(); // should throw
 	}
-	
+
 	@Test(expected = NoSuchElementException.class)
 	public void testRemoveFirstFromEmptyDeque() {
 		Deque<Integer> deque = new Deque<Integer>();
@@ -107,9 +104,9 @@ public class DequeTest {
 		for (int i = 0; i < count; i++) {
 			deque.removeFirst();
 		}
-		deque.removeFirst(); //should throw exception
+		deque.removeFirst(); // should throw exception
 	}
-	
+
 	@Test(expected = UnsupportedOperationException.class)
 	public void testRemoveFromIterator() {
 		Deque<String> deque = new Deque<String>();
@@ -118,7 +115,7 @@ public class DequeTest {
 		deque.addFirst("first");
 		Iterator<String> i = deque.iterator();
 		i.next();
-		i.remove(); //should throw exception
+		i.remove(); // should throw exception
 	}
 
 	@Test(expected = NoSuchElementException.class)
@@ -129,7 +126,9 @@ public class DequeTest {
 		Iterator<String> i = deque.iterator();
 		i.next();
 		i.next();
-		i.next(); //should throw exception
+		i.next(); // should throw exception
 	}
 
+
+	
 }
