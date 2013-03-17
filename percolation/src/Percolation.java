@@ -1,5 +1,3 @@
-package org.coursera.algs4.assignment.percolation;
-
 import java.util.Arrays;
 
 import org.coursera.algs4.QuickUnionAlgorithm;
